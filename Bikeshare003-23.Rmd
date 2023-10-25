@@ -1,0 +1,76 @@
+---
+title: "Bikeshare 002"
+author: "Jason Ofosu-Mensah"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+```
+```{r}
+theme_set(theme_minimal())
+```
+
+
+```{r}
+bikes <- here("C:/Users/jethu/Documents/R Studio - DS 241/Assignments/ds241_f23/data_raw", "202309-capitalbikeshare-tripdata.zip")
+
+dfbikes <- read_csv(bikes) |> clean_names()
+```
+
+```{r}
+slice_head(dfbikes, n = 100)|>
+  ggplot(aes(x = start_lat, y = start_lng)) +
+  geom_point(aes(alpha = 0.00001))
+
+slice_head(dfbikes, n = 100) |>
+  ggplot(aes(x = end_lat, y = end_lng)) +
+  geom_point(aes(alpha = 0.00001))
+```
+
+```{r}
+df2=dfbikes |>
+  #slice_head(n=100)|>
+  pivot_longer(
+    cols = c(started_at, ended_at),
+    names_to = "start_end",
+    values_to = "t") |>
+  arrange(t) |>
+  mutate(rider_delta = (start_end == "started_at")*2-1) |> # result in +/-1s
+  mutate(riders = cumsum(rider_delta)) |>
+  relocate(t,start_end,riders,.after = rideable_type)
+view(df2)
+
+```
+
+```{r}
+df2 %>%
+  #slice_sample(prop = .1)|>
+  ggplot(aes(t,riders)) +
+  geom_line() + ggtitle("Riders within the month of september 2023, DC")
+```
+```{r}
+df2 %>% filter(month(t)==9) %>%
+  #slice_sample(prop = .01)
+  ggplot(aes(t,riders)) +geom_line() + facet_wrap(~mday (t), scales = "free_x",ncol = 7)+
+  ggtitle("Riders within the month of september 2023, DC")
+```
+
+```{r}
+df2 %>% filter(month(t)==9) %>%
+  mutate(epi=epiweek(t),wd=wday(t,label=TRUE,week_start = 7)) %>%
+  ggplot(aes(hms::as_hms(t), riders, color = as.factor(epi))) + geom_line(alpha = .7) + facet_wrap(~wd, scales = "free_x",ncol = 7)
+```
+```{r}
+df3 <- df2 %>%
+  mutate(type_riders=cumsum(rider_delta),.by = rideable_type) %>%
+  relocate(type_riders, .after = riders)
+```
+```{r}
+df3 %>% filter(month(t)==9) %>%
+  ggplot(aes(t,type_riders, color=rideable_type)) +geom_line() + facet_wrap(~mday (t), scales = "free_x",ncol = 7)
+```
+
