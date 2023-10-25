@@ -1,0 +1,15 @@
+---
+title: "Bike Share 1"
+output: html_notebook
+---
+
+```{r}
+library(janitor)
+library(here)
+library(tidyverse)
+```
+
+```{r}
+thisfile <- here("data_raw", )
+```
+
