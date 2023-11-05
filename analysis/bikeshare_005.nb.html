@@ -1,0 +1,78 @@
+---
+title: "Experiment 5: PUlling weather data"
+output: html_notebook
+---
+
+#Packages
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(openmeteo)
+```
+```{r}
+library(rwunderground)
+library(openmeteo)
+```
+# Weather Data
+
+```{r}
+washington <- weather_now("Washington") 
+
+```
+
+
+```{r}
+nyc <- weather_forecast("nyc",
+hourly = c("temperature_2m", "precipitation"),
+response_units = list(
+temperature_unit = "fahrenheit",
+precipitation_unit = "inch"
+))
+
+
+
+
+
+
+# will it rain tomorrow in Jakarta?
+tomorrow <- Sys.Date() + 1
+weather_forecast("jakarta", tomorrow, tomorrow, daily = "precipitation_sum")
+```
+
+```{r}
+washington <- weather_forecast("washington",
+hourly = c("temperature_2m", "precipitation"),
+response_units = list(
+temperature_unit = "fahrenheit",
+precipitation_unit = "inch"
+))
+
+
+```
+
+```{r}
+# obtain cloud cover history for London over 2020
+weather_history("London",
+start = "2020-01-01",
+end = "2021-12-31",
+hourly = "cloudcover"
+)
+```
+
+```{r}
+weather_variables()
+```
+
+```{r}
+washington_history <- weather_history("Washington", 
+                                
+                                      start = "2023-09-01",
+                                      end = "2023-09-30",
+                                      hourly = c("apparent_temperature",
+                                                 "wind_speed_10m",
+                                                 "precipitation", 
+                                                 "rain")
+                                      )
+```
+
