@@ -1,0 +1,24 @@
+---
+title: "Experiment 7"
+date: 2023-11-06
+output: html_notebook
+---
+
+#Packages 
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(openmeteo)
+```
+
+###Other Project Defaults
+```{r}
+theme_set(theme_minimal())
+```
+
+```{r}
+bikes <- here("data_raw", "202309-capitalbikeshare-tripdata.csv")
+
+dfbikes <- read_csv(bikes) |> clean_names()
+```
