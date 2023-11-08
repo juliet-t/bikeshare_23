@@ -191,6 +191,13 @@ df_r %>%
   geom_line()
 ```
 ```{r}
+df_w = df_w |>
+  mutate(with_tz(datetime, "UTC"))
+
+df_w$datetime[1:10]
+```
+
+```{r}
 df_j=df_s %>% left_join(df_w,
                         by=join_by(closest(t>=datetime)))
 ```
@@ -202,9 +209,75 @@ df_j=df_s %>%
  
 head(df_j)
 ```
+
 ```{r}
-df_j$t[1:5]
-df_j$datetime[1:5]
+df2$t[1:5]
+force_tz(df2$t[1:5],"America/New_York")
 ```
 
+```{r}
+df2c=df2 %>% mutate(t=force_tz(t,tzone="America/New_York")) #corrected
+ 
+df_s2=df2c %>% slice_sample(n=1000)
+ 
+df_j2=df_s2 %>% 
+  left_join(df_w,by=join_by(closest(t>=datetime)))  %>%
+  relocate(datetime, .after=t)
+ 
+head(df_j2)
+```
+
+```{r}
+dfc = df2c |>
+  left_join(df_w, by = join_by(closest(t>=datetime))) |>
+  relocate(datetime, .after=t) |>
+  rename(atemp = hourly_apparent_temperature, 
+         wind = hourly_wind_speed_10m,
+         prec = hourly_precipitation)
+```
+
+```{r}
+p2 = dfc |>
+  ggplot(aes(t,riders,color = prec > 1)) +
+  geom_point()
+```
+
+
+```{r}
+p2
+```
+
+```{r}
+p3=dfc %>% 
+  filter(day(t)==18) %>%
+  ggplot(aes(t,riders, color = prec)) +
+  geom_point() +
+  ggtitle("Rain on 18Sep")
+
+p3
+```
+
+```{r}
+p4=dfc %>% 
+  filter(day(t)==10) %>%
+  ggplot(aes(t,riders, color = prec)) +
+  geom_point() +
+  ggtitle("Rain on 10Sep")
+
+p4
+```
+
+```{r}
+p5=dfc %>% 
+  filter(day(t)==23) %>%
+  ggplot(aes(t,riders, color = wind)) +
+  geom_point() +
+  ggtitle("Rain on 10Sep")
+
+p5
+```
+
+```{r}
+plotly::ggplot(p2)
+```
 
