@@ -11,7 +11,7 @@
 
 
 
-<title>Bike Share 1</title>
+<title>Experiment 6: September rain effects</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,55 +1746,42 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Bike Share 1</h1>
+<h1 class="title toc-ignore">Experiment 6: September rain effects</h1>
+<h3 class="subtitle">Juliet Thistleton</h3>
 
 </div>
 
 
 <!-- rnb-text-begin -->
+<p>#Packages</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShqYW5pdG9yKVxuYGBgIn0= -->
-<pre class="r"><code>library(janitor)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGphbml0b3IpXG5saWJyYXJ5KGhlcmUpXG5saWJyYXJ5KG9wZW5tZXRlbylcbmBgYCJ9 -->
+<pre class="r"><code>library(tidyverse)
+library(janitor)
+library(here)
+library(openmeteo)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYamFuaXRvcuKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6c3RhdHPigJk6XG5cbiAgICBjaGlzcS50ZXN0LCBmaXNoZXIudGVzdFxuIn0= -->
-<pre><code>
-Attaching package: ‘janitor’
-
-The following objects are masked from ‘package:stats’:
-
-    chisq.test, fisher.test</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShoZXJlKVxuYGBgIn0= -->
-<pre class="r"><code>library(here)</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Set theme to minimal:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhlbWVfc2V0KHRoZW1lX21pbmltYWwoKSlcblxuYGBgIn0= -->
+<pre class="r"><code>theme_set(theme_minimal())
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiaGVyZSgpIHN0YXJ0cyBhdCBDOi9Vc2Vycy90aGlzdGxqeS9Eb2N1bWVudHMvYmlrZXNoYXJlXzIzXG4ifQ== -->
-<pre><code>here() starts at C:/Users/thistljy/Documents/bikeshare_23</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGAifQ== -->
-<pre class="r"><code>library(tidyverse)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIEF0dGFjaGluZyBjb3JlIHRpZHl2ZXJzZSBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDIuMC4wIOKUgOKUgFxu4pyUIGRwbHlyICAgICAxLjEuMyAgICAg4pyUIHJlYWRyICAgICAyLjEuNFxu4pyUIGZvcmNhdHMgICAxLjAuMCAgICAg4pyUIHN0cmluZ3IgICAxLjUuMFxu4pyUIGdncGxvdDIgICAzLjQuMyAgICAg4pyUIHRpYmJsZSAgICAzLjIuMVxu4pyUIGx1YnJpZGF0ZSAxLjkuMiAgICAg4pyUIHRpZHlyICAgICAxLjMuMFxu4pyUIHB1cnJyICAgICAxLjAuMiAgICAg4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIGRwbHlyOjpmaWx0ZXIoKSBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliBkcGx5cjo6bGFnKCkgICAgbWFza3Mgc3RhdHM6OmxhZygpXG7ihLkgVXNlIHRoZSBcdTAwMWJdODs7aHR0cDovL2NvbmZsaWN0ZWQuci1saWIub3JnL1x1MDAwN2NvbmZsaWN0ZWQgcGFja2FnZVx1MDAxYl04OztcdTAwMDcgdG8gZm9yY2UgYWxsIGNvbmZsaWN0cyB0byBiZWNvbWUgZXJyb3JzXG4ifQ== -->
-<pre><code>── Attaching core tidyverse packages ───────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.3     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.4.3     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.2     ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGhpc2ZpbGUgPC0gaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA5LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpXG5kZjEgPC0gcmVhZF9jc3YodGhpc2ZpbGUpXG5gYGAifQ== -->
-<pre class="r"><code>thisfile &lt;- here(&quot;data_raw&quot;, &quot;202309-capitalbikeshare-tripdata.csv&quot;)
-df1 &lt;- read_csv(thisfile)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmlrZXMgPC0gaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA5LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpXG5cbmRmYmlrZXMgPC0gcmVhZF9jc3YoYmlrZXMpIHw+IGNsZWFuX25hbWVzKClcbmBgYCJ9 -->
+<pre class="r"><code>bikes &lt;- here(&quot;data_raw&quot;, &quot;202309-capitalbikeshare-tripdata.csv&quot;)
+
+dfbikes &lt;- read_csv(bikes) |&gt; clean_names()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDUwMDkwIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>Rows: 450090 Columns: 13── Column specification ─────────────────────────────────────────────────────────────────────────────────────────────────────
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDUwMDkwIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 450090 Columns: 13── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────
 Delimiter: &quot;,&quot;
 chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
 dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
@@ -1805,8 +1792,33 @@ dttm (2): started_at, ended_at
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYycyA9IGRmYmlrZXMgfD5cbiAgc2VsZWN0KHJpZGVhYmxlX3R5cGUsIG1lbWJlcl9jYXN1YWwsIGNvbnRhaW5zKFwic3RhcnRcIiksIHJpZGVfaWQpIHw+XG4gIG11dGF0ZShzdGFydF9zdG9wID0gXCJzdGFydFwiKSB8PlxuICAgICAgICAgICByZW5hbWUodCA9IHN0YXJ0ZWRfYXQsIFxuICAgICAgICAgICAgICAgICAgc3RhdGlvbl9uYW1lID0gc3RhcnRfc3RhdGlvbl9uYW1lLFxuICAgICAgICAgc3RhdGlvbl9pZCA9IHN0YXJ0X3N0YXRpb25faWQsXG4gICAgICAgICBsYXQ9IHN0YXJ0X2xhdCxcbiAgICAgICAgIGxuZz1zdGFydF9sbmdcbiAgICAgICAgIClcbmBgYCJ9 -->
+<pre class="r"><code>df2s = dfbikes |&gt;
+  select(rideable_type, member_casual, contains(&quot;start&quot;), ride_id) |&gt;
+  mutate(start_stop = &quot;start&quot;) |&gt;
+           rename(t = started_at, 
+                  station_name = start_station_name,
+         station_id = start_station_id,
+         lat= start_lat,
+         lng=start_lng
+         )</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGYyZSA9IGRmYmlrZXMgfD5cbiAgc2VsZWN0KHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIG1lbWJlcl9jYXN1YWwsXG4gICAgICAgICBjb250YWlucyhcImVuZFwiKSkgfD5cbiAgXG5gYGAifQ== -->
+<pre class="r"><code>df2e = dfbikes |&gt;
+  select(ride_id, rideable_type, member_casual,
+         contains(&quot;end&quot;)) |&gt;
+  </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkJpa2UgU2hhcmUgMSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCmBgYHtyfQ0KbGlicmFyeShqYW5pdG9yKQ0KbGlicmFyeShoZXJlKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpgYGANCg0KYGBge3J9DQp0aGlzZmlsZSA8LSBoZXJlKCJkYXRhX3JhdyIsICIyMDIzMDktY2FwaXRhbGJpa2VzaGFyZS10cmlwZGF0YS5jc3YiKQ0KZGYxIDwtIHJlYWRfY3N2KHRoaXNmaWxlKQ0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkV4cGVyaW1lbnQgNjogU2VwdGVtYmVyIHJhaW4gZWZmZWN0cyINCnN1YnRpdGxlOiAiSnVsaWV0IFRoaXN0bGV0b24iDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojUGFja2FnZXMNCmBgYHtyfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KGphbml0b3IpDQpsaWJyYXJ5KGhlcmUpDQpsaWJyYXJ5KG9wZW5tZXRlbykNCmBgYA0KDQoNClNldCB0aGVtZSB0byBtaW5pbWFsOiANCmBgYHtyfQ0KdGhlbWVfc2V0KHRoZW1lX21pbmltYWwoKSkNCg0KYGBgDQoNCg0KYGBge3J9DQpiaWtlcyA8LSBoZXJlKCJkYXRhX3JhdyIsICIyMDIzMDktY2FwaXRhbGJpa2VzaGFyZS10cmlwZGF0YS5jc3YiKQ0KDQpkZmJpa2VzIDwtIHJlYWRfY3N2KGJpa2VzKSB8PiBjbGVhbl9uYW1lcygpDQpgYGANCg0KYGBge3J9DQpkZjJzID0gZGZiaWtlcyB8Pg0KICBzZWxlY3QocmlkZWFibGVfdHlwZSwgbWVtYmVyX2Nhc3VhbCwgY29udGFpbnMoInN0YXJ0IiksIHJpZGVfaWQpfD4NCiAgbXV0YXRlKHN0YXJ0X3N0b3AgPSAic3RhcnQiKSANCg0KDQp8Pg0KICAgICAgICAgICByZW5hbWUodCA9IHN0YXJ0ZWRfYXQsIA0KICAgICAgICAgICAgICAgICAgc3RhdGlvbl9uYW1lID0gc3RhcnRfc3RhdGlvbl9uYW1lLA0KICAgICAgICAgc3RhdGlvbl9pZCA9IHN0YXJ0X3N0YXRpb25faWQsDQogICAgICAgICBsYXQ9IHN0YXJ0X2xhdCwNCiAgICAgICAgIGxuZz1zdGFydF9sbmcNCiAgICAgICAgICkNCmBgYA0KDQpgYGB7cn0NCmRmMmUgPSBkZmJpa2VzIHw+DQogIHNlbGVjdChyaWRlX2lkLCByaWRlYWJsZV90eXBlLCBtZW1iZXJfY2FzdWFsLA0KICAgICAgICAgY29udGFpbnMoImVuZCIpKSB8Pg0KICANCmBgYA0KDQoNCg==</div>
 
 
 
@@ -1853,7 +1865,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("bikeshare_001.Rmd");
+  window.initializeSourceEmbed("Bikeshare004_23.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
