@@ -1,5 +1,6 @@
 ---
-title: "Experiment 7"
+title: "Experiment 7: DC Bikeshare Data"
+subtitle: "Effect of rain on ridership" 
 date: 2023-11-06
 output: html_notebook
 ---
@@ -9,6 +10,7 @@ output: html_notebook
 library(tidyverse)
 library(janitor)
 library(here)
+library(plotly)
 library(openmeteo)
 ```
 
@@ -104,11 +106,6 @@ df2=bind_rows(df2s,df2e) %>%
 df2 %>% 
   ggplot(aes(t,riders)) +
   geom_line()
-```
-```{r}
-df2 %>% 
-  ggplot(aes(t,riders)) +
-  geom_point()
 ```
 
 # Constructing a Subsampled dataset
@@ -270,7 +267,7 @@ p4
 ```{r}
 p5=dfc %>% 
   filter(day(t)==23) %>%
-  ggplot(aes(t,riders, color = wind)) +
+  ggplot(aes(t,riders, color = wind, shape = rideable_type )) +
   geom_point() +
   ggtitle("Rain on 10Sep")
 
@@ -278,6 +275,11 @@ p5
 ```
 
 ```{r}
-plotly::ggplot(p2)
+ggplotly(p2)
+```
+
+```{r}
+df1_d=dfbikes %>%
+  mutate(ride_time = ended_at-started_at)
 ```
 
