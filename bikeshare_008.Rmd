@@ -1,0 +1,70 @@
+---
+title: "Experiment 8: Bike Station Gains/Deficits"
+date: 2023-11-13
+author: "Juliet Thistleton, Jason Ofosu-Mensah, Jesse Dykes"
+output: html_notebook
+---
+
+#Packages 
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(plotly)
+library(openmeteo)
+```
+
+###Other Project Defaults
+```{r}
+theme_set(theme_minimal())
+```
+
+#Reading in Data
+```{r}
+bikes <- here("data_raw", "202309-capitalbikeshare-tripdata.csv")
+
+dfbikes <- read_csv(bikes) |> clean_names()
+```
+#Calculating Ride Duration
+```{r}
+df1_d=dfbikes %>%
+  mutate(ride_time = ended_at-started_at)
+```
+
+# Removing times that start after they end
+```{r}
+dfb = df1_d |>
+  filter(!(ride_time <= 0))
+```
+
+# Counting the number of "starts" from each station ID
+```{r}
+df_start = dfb |>
+  rename(station_id = start_station_id) |>
+  summarise(.by = station_id, n = n())
+```
+
+# Counting the number of "ends" form each Station ID
+
+```{r}
+df_end = dfb |>
+    rename(station_id = end_station_id) |>
+  summarise(.by = station_id, n = n())
+```
+
+# Joining df_start and df_end
+```{r}
+dfsej = df_start |>
+  left_join(df_end, by = join_by(station_id)) |>
+  na.omit() |> 
+  arrange(station_id) |>
+  rename(start = n.x, end = n.y) |>
+  mutate(t = end - start)
+```
+
+# Plot of change of stations
+
+```{r}
+ggplot(dfsej, aes(station_id, t)) + geom_point()
+```
+

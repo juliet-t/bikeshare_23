@@ -1,0 +1,163 @@
+---
+title: "Replacement Class - Introduction to spatial data"
+date:  "2023-11-12"
+author: "Juliet Thistleton"
+output: html_notebook
+---
+
+This notebook supports an asynchronous lecture meant to introduce you to some basics of spatial data.  The lecture will be provided via Echo360.
+
+I will provide you with a partially completed notebook to assist your work.
+
+This notebooks will focus on "spatial data" and also accessing demographic data in R.
+
+Key topics for today:
+
+* Using `here` package
+* Using the `/data_raw/` directory
+* Reminder on joins (focus: left join)
+* Our Spatial Data
+   * Neighborhoods
+   * Joining with non-spatial data
+   * Census data
+   * Joining with spatial data
+* ignore html in git
+
+## Packages
+
+Standards:
+
+```{r}
+library(knitr)
+library(tidyverse)
+library(janitor)
+library(lubridate) # because we will probably see some dates
+library(here) # more easily access files in your project
+```
+
+Some additional packages focuses on today's work:
+
+```{r}
+library(sf) # working with simple features - geospatial
+library(tmap)
+library(tidycensus)
+library(gbfs)
+
+```
+A link to a book on `tmap`: https://r-tmap.github.io/
+
+
+## Using the Neighborhood Geospatial Data (using /data)
+
+I will use the GeoJSON file.  (Newer, not necessarily better, but ... a single file.  Not smaller, but ... this one is not big.)  
+
+https://opendata.dc.gov/datasets/DCGIS::dc-health-planning-neighborhoods/about
+
+
+## Using the Neighborhood Geospatial Data (using /data)
+
+Load the crime geospatial data as `crime`.
+```{r}
+crime=st_read(here("data_raw", "Crime_Incidents_in_2022.geojson")) |> clean_names()
+
+class(crime)
+```
+
+Ensure it plots.
+
+```{r}
+plot(crime)
+```
+# Load the Bike Share Data
+
+```{r}
+bikes <- read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv")) |> clean_names()
+```
+
+
+```{r}
+df1 = crime |>
+  count(block) |>
+  group_by(block)
+```
+
+
+```{r}
+tm_shape(df1) + tm_dots("n") 
+
+
+tmap_mode("view")
+
+#tm_shape(neigh2) + tm_polygons("total_positives", alpha = .5)
+```
+## Joining with other spatial data
+
+Let's get some data using `tidycensus`.  Need an API key   https://api.census.gov/data/key_signup.html
+
+```{r}
+census_api_key("9fc5d3792d3a5e922287c3f4e9995118766d50a2")
+
+```
+
+ What data is available --- and what is the variable name?
+ 
+ (We are interested in the 5year American Community Survey.)
+
+```{r}
+#Data available: Demographics of Dc area
+#Variable names: name, label, concept, geography
+v20 = load_variables(2018, "acs5")
+
+```
+
+Get some data:
+
+```{r}
+df_cencus=get_acs(geography = "tract",
+                  variables=c("median_inc"="B06011_001",
+                              "pop"="B01001_001",
+                              "pop_black"="B02009_001"),
+                  state="DC",geometry=TRUE,year=2021) 
+```
+
+Make a plot to verify that you read the data:
+
+```{r}
+class(df_cencus)
+plot(df_cencus)
+```
+### A BETTER VISUALIZATION
+
+It's in long format.  Let's make it wide.
+
+```{r}
+df_cens=df_cencus %>% 
+  select(-moe) %>% 
+  pivot_wider(names_from = "variable", 
+              values_from = "estimate")
+  
+ 
+
+tm_shape(df_cens) +tm_polygons("median_inc",alpha=.5)
+```
+
+
+```{r}
+df_cen=get_acs(geography = "tract",
+                  variables=c("pop_hispanic"="B01001I_001",
+                              "pop"="B01001_001",
+                              "pop_black"="B02009_001"),
+                  state="DC",geometry=TRUE,year=2021) 
+
+class(df_cen)
+
+df_cen2=df_cen %>% 
+  select(-moe) %>% 
+  pivot_wider(names_from = "variable", 
+              values_from = "estimate")
+  
+ 
+
+tm_shape(df_cen2) +tm_polygons("pop_hispanic",alpha=.5)
+```
+

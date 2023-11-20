@@ -1,0 +1,64 @@
+---
+title: "Ridership Spatial Join"
+output: html_notebook
+---
+
+## Packages
+
+Standards:
+
+```{r}
+library(knitr)
+library(tidyverse)
+library(janitor)
+library(lubridate) # because we will probably see some dates
+library(here) # more easily access files in your project
+```
+
+Some additional packages focuses on today's work:
+
+```{r}
+library(sf) # working with simple features - geospatial
+library(tmap)
+library(tidycensus)
+
+```
+
+## Using the Neighborhood Geospatial Data (using /data)
+
+I will use the GeoJSON file.  (Newer, not necessarily better, but ... a single file.  Not smaller, but ... this one is not big.)  
+
+https://opendata.dc.gov/datasets/DCGIS::dc-health-planning-neighborhoods/about
+
+
+## Using the Neighborhood Geospatial Data (using /data)
+
+Load the neighborhood geospatial data as `neigh`.
+```{r}
+neigh=st_read(here("data_raw", "DC_Health_Planning_Neighborhoods.geojson")) |> clean_names()
+
+class(neigh)
+```
+
+# Load Bike Data
+
+```{r}
+bikes <- here("data_raw", "202309-capitalbikeshare-tripdata.csv")
+
+dfbikes <- read_csv(bikes) |> clean_names()
+```
+
+# Sample dfbikes
+```{r}
+rand_df <-  sample_n(dfbikes, 1000)
+```
+
+#  
+
+```{r}
+dfj = rand_df |>
+  
+  
+  
+```
+
