@@ -168,7 +168,7 @@ df_cens=df_cencus %>%
               values_from = "estimate")
   
  
-
+n
 tm_shape(df_cens) +tm_polygons("median_inc",alpha=.5)
 ```
 
